@@ -2,8 +2,7 @@ import React from 'react';
 import { Table, TableCell, TableRow } from '@material-ui/core'
 
 
-function tradeVolume(tickers, trade)
-{
+function volumen(tickers, trade){
   let totalBuy = 0;
   for(let i = 0; i < tickers.length; i++){
     totalBuy += trade.filter((stock) => stock.ticker === tickers[i]).reduce((a, b) => a + b.volume, 0)  
@@ -11,8 +10,7 @@ function tradeVolume(tickers, trade)
   return totalBuy;
 }
 
-function getTickers(exchange, exchanges, stocks)
-{
+function import_tickers(exchange, exchanges, stocks){
   const companies = exchanges[exchange].listed_companies
   const tickers = stocks.map((stock) => {
     if (companies.includes(stock.company_name)) return stock.ticker;
@@ -21,36 +19,30 @@ function getTickers(exchange, exchanges, stocks)
   return tickers.filter(ticker => ticker);
 }
 
-function marketShare(exchange, exchanges, stocks, buy, sell, volume)
-{
-  let total = 0;
+function marketShare(exchange, exchanges, stocks, buy, sell, volume){
+  let resultado = 0;
   let tickers = [];
   let exchanges_list = Object.keys(exchanges);
 
-  exchanges_list.forEach((current_exchange) => 
-  {
-    if (current_exchange !== exchange) {
-      tickers = getTickers(current_exchange, exchanges, stocks);
-      total += tradeVolume(tickers, buy) + tradeVolume(tickers, sell);
+  exchanges_list.forEach((aux) => {
+    if (aux !== exchange) {
+      tickers = import_tickers(aux, exchanges, stocks);
+      resultado += volumen(tickers, buy) + volumen(tickers, sell);
       }
   })
-  console.log('volume', volume)
-  console.log('total', total)
-  let market_share = volume/(volume + total) * 100;
-  return market_share.toFixed(4);
+  let share = volume/(volume + resultado) * 100;
+  return share.toFixed(4);
 }
 
-function Table2(props)
-{
+function Table2(props){
   const { exchange, exchanges, stocks, buy, sell } = props;
   let exchangeStocks;
-  if (exchange && exchanges && stocks)
-  {
-    exchangeStocks = getTickers(exchange, exchanges, stocks);
+  if (exchange && exchanges && stocks){
+    exchangeStocks = import_tickers(exchange, exchanges, stocks);
   }
 
-  const buyVolume = (exchangeStocks && tradeVolume(exchangeStocks, buy)) || 0;
-  const sellVolume = (exchangeStocks && tradeVolume(exchangeStocks, sell)) || 0;
+  const buyVolume = (exchangeStocks && volumen(exchangeStocks, buy)) || 0;
+  const sellVolume = (exchangeStocks && volumen(exchangeStocks, sell)) || 0;
 
   return (
     <Table aria-label="simple table">
@@ -89,4 +81,3 @@ function Table2(props)
 }
   
 export default Table2;
-  

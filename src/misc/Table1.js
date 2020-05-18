@@ -2,26 +2,26 @@ import React from 'react';
 import { Table, TableCell, TableRow, TableBody } from '@material-ui/core'
 
 
-function totalTradeVolume(ticker, buy, sell)
+function volume(ticker, buy, sell)
 {
-  let totalBuy = buy.filter((stock) => stock.ticker === ticker).reduce((a, b) => a + b.volume, 0)
-  let totalSell = sell.filter((stock) => stock.ticker === ticker).reduce((a, b) => a + b.volume, 0)
-  return totalBuy + totalSell;
+  let resultado_1 = buy.filter((stock) => stock.ticker === ticker).reduce((a, b) => a + b.volume, 0)
+  let resultado_2 = sell.filter((stock) => stock.ticker === ticker).reduce((a, b) => a + b.volume, 0)
+  return resultado_1 + resultado_2;
 }
 
-function getMax(data)
+function minimum(data)
 {
-  let values = data.map((update) => update.value);
-  return Math.max(...values);
+  let resultado = data.map((update) => update.value);
+  return Math.min(...resultado);
 }
 
-function getMin(data)
+function maximum(data)
 {
-  let values = data.map((update) => update.value);
-  return Math.min(...values);
+  let resultado = data.map((update) => update.value);
+  return Math.max(...resultado);
 }
 
-function percentVariation(data)
+function variation(data)
 {
   let last = data[data.length - 1].value;
   let penultimate = data[data.length - 2].value;
@@ -36,27 +36,27 @@ function Table1(props)
   return (
     <Table aria-label="simple table">
       <TableBody>
-        <TableRow key='volumen total transado'>
+        <TableRow key='volumen transado'>
           <TableCell component="th" scope="row">
             Volumen Transado
           </TableCell>
-          <TableCell align="right">{stock? totalTradeVolume(stock.ticker, buy, sell): 0}</TableCell>
+          <TableCell align="right">{stock? volume(stock.ticker, buy, sell): 0}</TableCell>
         </TableRow>
-        <TableRow key='alto historico'>
+        <TableRow key='minimo historico'>
           <TableCell component="th" scope="row">
-            Alto Histórico
+            Mínimo Histórico
           </TableCell>
-          <TableCell align="right">{update && update.length > 0 ? getMax(update) : 0}</TableCell>
+          <TableCell align="right">{update && update.length > 0 ? minimum(update) : 0}</TableCell>
         </TableRow>
-        <TableRow key='bajo historico'>
+        <TableRow key='maximo historico'>
           <TableCell component="th" scope="row">
-            Bajo Histórico
+            Máximo Histórico
           </TableCell>
-          <TableCell align="right">{update && update.length > 0 ? getMin(update) : 0}</TableCell>
+          <TableCell align="right">{update && update.length > 0 ? maximum(update) : 0}</TableCell>
         </TableRow>
-        <TableRow key='ultimo precio'>
+        <TableRow key='precio'>
           <TableCell component="th" scope="row">
-            Último precio
+            Precio
           </TableCell>
           <TableCell align="right">{update && update.length > 0 ? update[update.length - 1].value : 0}</TableCell>
         </TableRow>
@@ -64,7 +64,7 @@ function Table1(props)
           <TableCell component="th" scope="row">
             Variación Porcentual
           </TableCell>
-          <TableCell align="right">{update && update.length > 1 ? percentVariation(update): 0}%</TableCell>
+          <TableCell align="right">{update && update.length > 1 ? variation(update): 0}%</TableCell>
         </TableRow>
       </TableBody>
     </Table>
